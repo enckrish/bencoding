@@ -7,11 +7,28 @@ import (
 	"os"
 )
 
+const filename = "mock/data/debian-12.5.0-amd64-netinst.iso.torrent"
+
 func main() {
-	f, err := os.Open("mock/data/debian-12.5.0-amd64-netinst.iso.torrent")
+	// Reading bencoded file
+	m := Read()
+
+	// Pretty printing
+	j, _ := json.MarshalIndent(m, "", "  ")
+	fmt.Println(string(j))
+
+	// Encoding the created dictionary
+	enc := bencoding.EncodeAny(m)
+	if enc == "" {
+		panic("Encoding failed!")
+	}
+	fmt.Println(enc)
+}
+
+func Read() map[string]any {
+	f, err := os.Open(filename)
 
 	if err != nil {
-		print("File open err: ")
 		panic(err)
 	}
 
@@ -23,6 +40,5 @@ func main() {
 	}
 
 	m := o.(bencoding.BDict)
-	j, _ := json.MarshalIndent(m, "", "  ")
-	fmt.Println(string(j))
+	return m
 }
